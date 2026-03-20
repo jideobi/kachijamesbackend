@@ -15,7 +15,17 @@ scheduleMonthlyNewsletter();
 
 const app = express();
 
-app.use(cors());
+//pp.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",      // local dev
+      "https://www.kachijames.com" // live site
+    ],
+    methods: ["GET", "POST"],
+  })
+);
+
 app.use(express.json());
 
 
