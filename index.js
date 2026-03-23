@@ -16,14 +16,14 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://www.kachijames.com"
+      "https://www.kachijames.com",
     ],
-    methods: ["GET", "POST", "OPTIONS"],
+    methods: ["GET", "POST"],
     credentials: true,
   })
 );
 
-app.options("*", cors());
+app.use(express.json());
 
 // ✅ MIDDLEWARE
 app.use(express.json());
