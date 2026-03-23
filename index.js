@@ -15,12 +15,15 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",       // local dev
-      "https://www.kachijames.com", // production
+      "http://localhost:5173",
+      "https://www.kachijames.com"
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
   })
 );
+
+app.options("*", cors());
 
 // ✅ MIDDLEWARE
 app.use(express.json());
