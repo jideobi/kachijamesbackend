@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+//import nodemailer from "nodemailer";
 
 // const transporter = nodemailer.createTransport({
 //   service: "gmail",
@@ -10,18 +10,20 @@ import nodemailer from "nodemailer";
 
 // import nodemailer from "nodemailer";
 
-console.log("📌 EMAIL_USER:", process.env.EMAIL_USER);
-console.log("📌 EMAIL_PASS:", process.env.EMAIL_PASS ? "SET" : "NOT SET");
+// console.log("📌 EMAIL_USER:", process.env.EMAIL_USER);
+// console.log("📌 EMAIL_PASS:", process.env.EMAIL_PASS ? "SET" : "NOT SET");
 
-export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,          // ✅ CHANGE THIS
-  secure: false,      // ✅ VERY IMPORTANT
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+
+
+// export const transporter = nodemailer.createTransport({
+//   host: "smtp.gmail.com",
+//   port: 587,          // ✅ CHANGE THIS
+//   secure: false,      // ✅ VERY IMPORTANT
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 
 
 // export const sendEmail = async (to, subject, html) => {
@@ -33,17 +35,45 @@ export const transporter = nodemailer.createTransport({
 //   });
 // };
 
+// export const sendEmail = async (to, subject, html) => {
+//   try {
+//     const info = await transporter.sendMail({
+//       from: `"Kachi James Gallery" <${process.env.EMAIL_USER}>`,
+//       to,
+//       subject,
+//       html,
+//     });
+
+//     console.log("✅ Email sent:", info.messageId);
+//   } catch (error) {
+//     console.error("❌ Email failed:", error);
+//   }
+// };
+
+
+import SibApiV3Sdk from "sib-api-v3-sdk";
+
+const client = SibApiV3Sdk.ApiClient.instance;
+
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
+
 export const sendEmail = async (to, subject, html) => {
   try {
-    const info = await transporter.sendMail({
-      from: `"Kachi James Gallery" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
+    const result = await tranEmailApi.sendTransacEmail({
+      sender: {
+        email: "kachijamesgallery1@gmail.com",
+        name: "Kachi James Gallery",
+      },
+      to: [{ email: to }],
+      subject: subject,
+      htmlContent: html,
     });
 
-    console.log("✅ Email sent:", info.messageId);
+    console.log("✅ Brevo email sent:", result);
   } catch (error) {
-    console.error("❌ Email failed:", error);
+    console.error("❌ Brevo error:", error);
   }
 };
