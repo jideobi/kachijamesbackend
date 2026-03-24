@@ -53,27 +53,44 @@
 
 import SibApiV3Sdk from "sib-api-v3-sdk";
 
-const client = SibApiV3Sdk.ApiClient.instance;
+// 🔍 Check env once at startup
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
 
-const apiKey = client.authentications["api-key"];
-apiKey.apiKey = process.env.BREVO_API_KEY;
+if (!BREVO_API_KEY) {
+  console.error("❌ BREVO API KEY NOT SET");
+} else {
+  console.log("✅ BREVO API KEY LOADED");
+}
+
+// 🔧 Initialize Brevo client
+const client = SibApiV3Sdk.ApiClient.instance;
+client.authentications["api-key"].apiKey = BREVO_API_KEY;
 
 const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
+// 📤 Send Email Function
 export const sendEmail = async (to, subject, html) => {
+  console.log("📤 Sending email to:", to);
+
   try {
     const result = await tranEmailApi.sendTransacEmail({
       sender: {
-        email: "kachijamesgallery1@gmail.com",
+        email: "kachijamesgallery1@gmail.com", // must be verified in Brevo
         name: "Kachi James Gallery",
       },
       to: [{ email: to }],
-      subject: subject,
+      subject,
       htmlContent: html,
     });
 
-    console.log("✅ Brevo email sent:", result);
+    console.log("✅ Email sent successfully:", result?.messageId || result);
+    return result;
+
   } catch (error) {
-    console.error("❌ Brevo error:", error);
+    console.error(
+      "❌ Brevo error:",
+      error?.response?.body || error.message || error
+    );
+    throw error; // 🔥 important for debugging upstream
   }
 };
